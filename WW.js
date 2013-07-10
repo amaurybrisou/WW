@@ -108,7 +108,7 @@ WW.WorkerTask = function(){
 
     var i =0;
   	for(var key in queryableFunctions){
-      console.log(i , len);
+      
   		t += key+" : "+queryableFunctions[key];
       t += (++i != len  ) ? ',' : "";
   	}
@@ -117,7 +117,6 @@ WW.WorkerTask = function(){
   	t += "self.onmessage="+onmessage.toString()+';';
   	
 
-  	console.log(t);
 
   	var blob = new Blob([t], { type : "text/javascript"});
   	return window.URL.createObjectURL(blob);
