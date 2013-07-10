@@ -1,0 +1,42 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript" src="WW.js"></script>
+	<script type="text/javascript">
+
+
+		/* Worker Task */
+		var task = new WW.WorkerTask();
+
+		/* Worker Task Listeners */
+		task.addListener('bonjour', function(o){
+			Reply('print', "Bonjour "+o);
+		});
+
+		task.addListener('calc', function(o){
+			Reply('print', 2*o);
+		});
+		/* End Worker Task */
+
+
+		/* Worker */
+		var ww = new WW.Worker(task.toBlob());
+		
+		/* Worker Listener */
+		ww.addListener('print', function (pResult) {
+			alert(pResult);
+	    });
+
+	    /*End Worker Listener */
+
+
+	    /* Let's Query */
+		ww.Query("calc", 2);
+		ww.Query("calc", 5);
+		ww.Query("bonjour", "Amaury");
+
+	</script>
+</body>
+</html>

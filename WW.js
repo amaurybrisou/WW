@@ -89,26 +89,32 @@ WW.WorkerTask = function(){
     }
   };
 
+  var len = 0;
   this.addListener = function(pLName, pLFunction){
     queryableFunctions[pLName] = pLFunction;
+    len++;
   };
 
   this.removeListener = function(pLName){
     delete queryableFunctions[pLName];
+    len--;
   };
 
   this.toBlob = function(){
   	
-  	var t = Reply.toString()+';\n';
-  	t += "queryableFunctions = {\n";
+  	var t = Reply.toString()+';';
+  	t += "queryableFunctions = {";
 
 
+    var i =0;
   	for(var key in queryableFunctions){
-  		t += key+" : "+queryableFunctions[key]+"\n";
+      console.log(i , len);
+  		t += key+" : "+queryableFunctions[key];
+      t += (++i != len  ) ? ',' : "";
   	}
   	
-  	t += "};\n";
-  	t += "self.onmessage="+onmessage.toString()+';\n';
+  	t += "};";
+  	t += "self.onmessage="+onmessage.toString()+';';
   	
 
   	console.log(t);
