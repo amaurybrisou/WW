@@ -3,10 +3,22 @@
 	<title></title>
 </head>
 <body>
-	<script type="text/javascript" src="ww.js"></script>
+	<script type="text/javascript" src="WW.js"></script>
 	<script type="text/javascript">
-		var ww = new WW.Worker("ww.js");
-		console.log(ww);
+		var task = new WW.WorkerTask();
+
+		task.addListener('bonjour', function(o){
+			Reply('print', "Bonjour "+o);
+		});
+
+		var ww = new WW.Worker(task.toBlob());
+		
+		ww.addListener('print', function (pResult) {
+			alert(pResult);
+	    });
+
+		ww.Query("bonjour", "Amaury");
+
 	</script>
 </body>
 </html>
