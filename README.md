@@ -63,13 +63,13 @@ or Whatever ArrayView)
 for example before Querying :
 
 ```javascript
-ww.addNativeArray(a_native_array_view or a_native_buffer);
+myWorker.addNativeArray(a_native_array_view or a_native_buffer);
 ```
 
 and in your WorkerTask Listener :
 
 ```javascript
-task.addListener('native_example', function(pArgs){
+myTask.addListener('native_example', function(pArgs){
 								var ab = pArgs[0];
 								addNativeArray(ab);
 								Reply('print',  ab);
