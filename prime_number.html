@@ -1,0 +1,58 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<button onclick="prime();">Prime Number Start/Stop</button>
+	<div id="content"></div>
+	<script type="text/javascript" src="WW.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="ExampleTasks.js"></script>
+
+
+	<script type="text/javascript">
+
+		content = document.getElementById("content");
+		content.innerHTML = "Are Transferables Supported ? : "+supported+
+			"<br/>Using Transferables : "+USE_TRANSFERABLE+"<br/>";
+		
+		/* Worker Task */
+		var prime_task = WW.PrimeNumberTask();
+		/* End Worker Task */
+
+		/* Worker */
+		var ww = new WW.Worker(prime_task.toBlob());
+		
+		/* Worker Listener */
+		
+		var rows = 200, row_count = 0;
+		ww.addListener('print', function (pResult) {
+			nb_count++;
+			content.innerHTML += pResult[0]+" ";
+
+			if( (row_count+=(pResult[0].toString().length+1)) % rows === 0 || row_count > rows){
+				console.log(row_count);
+				content.innerHTML += "<br/>";
+				row_count = 0;	
+			} 
+	    });
+
+	    /*End Worker Listener */
+	    var delay = 0; //delay in ms
+	    var run = false;
+	    var nb_count = 0;
+	    var SentTime;
+	    function prime(){
+	    	if(!run){
+	    		SentTime = Date.now();
+	    		ww.Query('prime_number', delay);
+	    		run = true;
+	    	} else {
+	    		content.innerHTML += "Worker Terminated ! <br/>"+nb_count+" Prime Numbers Computed in "+((Date.now() - SentTime) / 1000)+" s<br/>";
+	    		ww.terminate();
+	    		run = false;
+	    	}
+	    };
+	</script>
+</body>
+</html>

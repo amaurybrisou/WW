@@ -36,6 +36,8 @@ And now add your Listener called from your WW.WorkerTask Listener ( cf : Reply):
 
 for exemple :
 
+Note that you receive results in the same order you sent them.
+
 ```javascript
 myWorker.addListener('print', function (pResult) {
 	alert(pResult);
@@ -52,4 +54,30 @@ for exemple :
 myWorker.Query("bonjour", "Amaury");
 ```
 
-forthcoming !
+##Advance Usage, Transferable Objects :
+
+In order to transfer your native arrays, simply call the function addNativeArray()
+on your WW.Worker() and also in your WorkerTask Listener ( you can add either ArrayBuffer
+or Whatever ArrayView)
+
+for example before Querying :
+
+```javascript
+ww.addNativeArray(a_native_array_view or a_native_buffer);
+```
+
+and in your WorkerTask Listener :
+
+```javascript
+task.addListener('native_example', function(pArgs){
+								var ab = pArgs[0];
+								addNativeArray(ab);
+								Reply('print',  ab);
+							});
+```
+
+at Last you can Query your worker as usual like this :
+
+```javascript
+myWorker.Query("native_example", my_native_array);
+```
