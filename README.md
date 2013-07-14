@@ -1,8 +1,8 @@
-#Project - WW 
+##Project - WW 
 
 Extention of Web Worker
 
-Usage : 
+###Basic Usage : 
 
 Create a WW.WorkerTask :
 	
@@ -49,7 +49,7 @@ by calling the method Query on you WW.Worker Object.
 for exemple :
 
 ```javascript
-myWorker.Query("bonjour", "Amaury");
+myWorker.Query("bonjour", "Friends");
 ```
 
 forthcoming !
