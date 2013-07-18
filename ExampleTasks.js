@@ -63,3 +63,23 @@ WW.TransferableObjectTask = function(){
 };
 
 WW.TransferableObjectTask.prototype = Object.call(WW.WorkerTask.prototype);
+
+
+WW.ImportScriptTask = function(){
+	WW.WorkerTask.call(this);
+
+	this.addListener('import_script', function(){
+		
+
+		var result = additionner(2 , 2);
+
+		Reply('print', result);
+
+	});
+
+	return this;	
+}
+
+WW.ImportScriptTask.prototype = Object.call(WW.WorkerTask.prototype);
+
+

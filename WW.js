@@ -5,7 +5,7 @@ window.supported = false;
 (function(){
   //Check Wether Transferable Objects are supported
   var worker = new Worker(window.URL.createObjectURL(
-    new Blob(["onmessage=function(e){};"], { type : "text/javascript"})));
+    new Blob(["onmessage=function(e){ self.importScripts('add.js'); };"], { type : "text/javascript"})));
   var ab = new ArrayBuffer(1);
   worker.postMessage(ab, [ab]);
   if (ab.byteLength) {
@@ -39,12 +39,12 @@ WW.Worker = function(pURL, pListener, pOnError ){
 	};
 
 	//Define onerror function
-	if(pOnError){
-		worker.onerror = pOnError || 
-      function(error){
-        throw new Error(event.message + " (" + event.filename + ":" + event.lineno + ")");
-     };
-	}
+	
+	worker.onerror = pOnError || 
+    function(error){
+      throw new Error(event.message + " (" + event.filename + ":" + event.lineno + ")");
+   };
+
 
 	worker.Query = function(/* n args */){
 		if(arguments.length < 1){
@@ -69,6 +69,7 @@ WW.Worker = function(pURL, pListener, pOnError ){
     
       
       data["method"] = arguments[0];
+
       
       worker.postMessage(data, trans_data);
 
@@ -94,10 +95,6 @@ WW.Worker = function(pURL, pListener, pOnError ){
 	worker.addListener = function(pLName, pLFunction){
 		worker.listeners[pLName] = pLFunction;
 	};
-
-  worker.pause = function(){
-    worker.Query('pause');
-  }
 
 	worker.removeListener = function(pLName){
 		delete worker.listeners[pLName];
@@ -133,7 +130,7 @@ WW.WorkerTask = function(){
   var external_scripts = [];
 
   function Reply(/* listener name, arguments... */) {
-    if (arguments.length < 1) { 
+    if (arguments.length < 1) {
       throw new TypeError("reply - not enough arguments");
       return;
     }
@@ -149,7 +146,7 @@ WW.WorkerTask = function(){
           if(obj.buffer){
             trans_data.push(obj.buffer);
           } else if(obj instanceof ArrayBuffer){
-            trans_data.push(obj);  
+            trans_data.push(obj);
           }
         }
       }
@@ -167,10 +164,13 @@ WW.WorkerTask = function(){
 
   onmessage = function(pEvent) {
 
+
     if (pEvent.data instanceof Object &&
      pEvent.data.hasOwnProperty("method")) {
 
       var data = pEvent.data;
+
+    
 
       queryable_functions[pEvent.data.method].apply(
         self,
@@ -216,7 +216,7 @@ WW.WorkerTask = function(){
 
   function defaultQuery(str){
     throw JSON.stringify(str);
-  };  
+  };
 
   this.toBlob = function(){
   	if(!len) throw new Error('No Listener found');
@@ -231,21 +231,27 @@ WW.WorkerTask = function(){
   	t += "queryable_functions = {";
 
     var i =0;
-  	for(var key in queryable_functions){     
+  	for(var key in queryable_functions){
   		t += key+" : "+queryable_functions[key];
       t += (++i != len  ) ? ',' : "";
   	}
+    t += "};";
 
     if(external_scripts.length){
-      t += "external_scripts = {";
+      t += "var external_scripts = {";
       var i =0;
       for(var key in external_scripts){     
-        t += key+" : "+external_scripts[key];
+        t += key+" : \""+external_scripts[key]+"\"";
         t += (++i != len  ) ? ',' : "";
       }
-  	}
-
-  	t += "};";
+      t += "};";
+      // for(var key in external_scripts){
+      //   t += "importScripts('"+external_scripts[key]+"');";
+      // }
+  	} else {
+       t += "var external_scripts = [];";
+    }
+  	
   	t += "self.onmessage="+onmessage.toString()+';';
   	
   	var blob = new Blob([t], { type : "text/javascript"});

@@ -39,6 +39,7 @@
 		plane = document.getElementById("plane");
 		rtt_count_div = document.getElementById("rtt_count");
 
+
 		ww.addListener('print', function (pResult) {
 			var array_view = pResult[0];
 			
@@ -46,9 +47,13 @@
 
 			var recv_time = Date.now();
 			var worker_recv_time = pResult[1];
+			var rtt = recv_time - sent_time;
+			rtt_sum += rtt;
 
-			content.innerHTML = "RTT : "+(Date.now() - sent_time)+"<br/>";
+			content.innerHTML = "RTT : "+rtt+"<br/>";
+			content.innerHTML += "Average RTT : "+rtt_sum / rtt_count+"<br/>";
 			content.innerHTML += "Client ---- "+(worker_recv_time - sent_time)+' ------> Worker ------- '+(recv_time - worker_recv_time)+' -----> Client<br/>';
+
 			plane.style.backgroundColor = array_view[0];
 			content.innerHTML += "byteLength value : "+array_view+" = "+array_view.buffer.byteLength  / 1024 / 1024 +"MB<br/>";	
 
@@ -70,6 +75,7 @@
 
 	    /*End Worker Listener */
 	    var delay = 0; //delay in ms
+	    var rtt_sum= 0;
 	    var sent_time;
 	    var rtt_count = document.getElementById("rtt_count").value || 0;
 	    var total_time = 0;
