@@ -1,8 +1,6 @@
 if(typeof WW == 'undefined') WW = {};
 
-var USE_TRANSFERABLE = true;
-var supported = false;
-window.supported = supported;
+window.supported = false;
 
 (function(){
   //Check Wether Transferable Objects are supported
@@ -14,14 +12,9 @@ window.supported = supported;
     console.log('Transferables are not supported in your browser!');
   } else {
     supported = true;
-    console.log('Transferables are supported ')
+    //console.log('Transferables are supported ')
   }
 }());
-
-
-getType = function(obj){
-  return Object.prototype.toString.call(obj).match(/\s\w+/)[0].trim();
-}
 
 WW.Worker = function(pURL, pListener, pOnError ){
 	var worker = new Worker(pURL);
@@ -31,7 +24,7 @@ WW.Worker = function(pURL, pListener, pOnError ){
 
 	//Listeners list
 	worker.listeners = {};
-  worker.trans_data = [];
+
 
 	worker.onmessage = function(pEvent){
 		if(pEvent.data instanceof Object &&
@@ -47,9 +40,10 @@ WW.Worker = function(pURL, pListener, pOnError ){
 
 	//Define onerror function
 	if(pOnError){
-		worker.onerror = pOnError || function(error){
-                                    console.log(error);
-                                 };
+		worker.onerror = pOnError || 
+      function(error){
+        throw new Error(event.message + " (" + event.filename + ":" + event.lineno + ")");
+     };
 	}
 
 	worker.Query = function(/* n args */){
@@ -60,20 +54,33 @@ WW.Worker = function(pURL, pListener, pOnError ){
 
     var data = Array.prototype.slice.call(arguments, 1);
 
-    if(supported && USE_TRANSFERABLE && worker.trans_data.length){
-      
-      data["method"] = arguments[0];
-      
-      worker.postMessage(data, worker.trans_data);
-
-      for(var i in worker.trans_data){
-        if(worker.trans_data[i].byteLength){
-          content.innerHTML += "Buffer is Defined After postMessage : Using Copy Mode<br>/";
-        }else{
-          content.innerHTML += "Buffer is Undefined After postMessage : Using Transferables<br/>";
+    if(supported && USE_TRANSFERABLE){
+      var trans_data = [];
+      for(var i = 0; i < data.length; i++){
+        var obj = data[i];
+        if(obj instanceof Object){
+          if(obj.buffer){
+            trans_data.push(obj.buffer);
+          } else if(obj instanceof ArrayBuffer){
+            trans_data.push(obj);  
+          }
         }
       }
     
+      
+      data["method"] = arguments[0];
+      
+      worker.postMessage(data, trans_data);
+
+      if(debug){
+        for(var i in trans_data){
+          if(trans_data[i].byteLength){
+            console.log("Buffer is Defined After postMessage : Using Copy Mode");
+          }else{
+            console.log("Buffer is Undefined After postMessage : Using Transferables");
+          }
+        }
+      }
     } else {
       data["method"] = arguments[0];
   		worker.postMessage(data);
@@ -88,17 +95,19 @@ WW.Worker = function(pURL, pListener, pOnError ){
 		worker.listeners[pLName] = pLFunction;
 	};
 
+  worker.pause = function(){
+    worker.Query('pause');
+  }
+
 	worker.removeListener = function(pLName){
 		delete worker.listeners[pLName];
 	};
 
   worker.addNativeArray = function(pNatArr) {
-    if(pNatArr.buffer || pNatArr instanceof ArrayBuffer){
-      if(pNatArr instanceof ArrayBuffer){
-       worker.trans_data.push(pNatArr);  
-      } else {
-       worker.trans_data.push(pNatArr.buffer);
-      }
+    if(pNatArr.buffer){
+      worker.trans_data.push(pNatArr.buffer);
+    } else if(pNatArr instanceof ArrayBuffer){
+      worker.trans_data.push(pNatArr);  
     } else {
       throw "addNativeArray : Error Not A NativeArray";
     }
@@ -107,12 +116,21 @@ WW.Worker = function(pURL, pListener, pOnError ){
 	return worker;
 };
 
+
+
+
+
+
+
+
+
+
+
+
 WW.WorkerTask = function(){
   var that = this;
-  var queryableFunctions = {};
-  var trans_data = [];
-  var indexes;
-  
+  var queryable_functions = {};
+  var external_scripts = [];
 
   function Reply(/* listener name, arguments... */) {
     if (arguments.length < 1) { 
@@ -123,16 +141,29 @@ WW.WorkerTask = function(){
     var data = Array.prototype.slice.call(arguments, 1);
     
 
-    if(supported && USE_TRANSFERABLE && trans_data.length) {
-      
+    if(supported && USE_TRANSFERABLE) {
+      var trans_data = [];
+      for(var i = 0; i < data.length; i++){
+        var obj = data[i];
+        if(obj instanceof Object){
+          if(obj.buffer){
+            trans_data.push(obj.buffer);
+          } else if(obj instanceof ArrayBuffer){
+            trans_data.push(obj);  
+          }
+        }
+      }
+
       data["method"] = arguments[0];
 
       self.postMessage(data, trans_data);
+
     } else {
       data["method"] = arguments[0];
       self.postMessage(data);
     }
   };
+
 
   onmessage = function(pEvent) {
 
@@ -141,7 +172,7 @@ WW.WorkerTask = function(){
 
       var data = pEvent.data;
 
-      queryableFunctions[pEvent.data.method].apply(
+      queryable_functions[pEvent.data.method].apply(
         self,
         [data]);
 
@@ -151,26 +182,32 @@ WW.WorkerTask = function(){
   };
 
   function addNativeArray(pNatArr) {
-    if(pNatArr.buffer || pNatArr instanceof ArrayBuffer){
+
+    if(pNatArr.buffer || pNatArr instanceof ArrayBuffer ||
+        pNatArr instanceof ArrayBufferView){
       if(pNatArr instanceof ArrayBuffer){
         trans_data.push(pNatArr);  
       } else {
         trans_data.push(pNatArr.buffer);
       }
-    } else {
-      log("addNativeArray : Error Not A NativeArray");
     }
   };
 
+
+
   var len = 0;
   this.addListener = function(pLName, pLFunction){
-    queryableFunctions[pLName] = pLFunction;
+    queryable_functions[pLName] = pLFunction;
     len++;
   };
 
   this.removeListener = function(pLName){
-    delete queryableFunctions[pLName];
+    delete queryable_functions[pLName];
     len--;
+  };
+
+  this.addExternalScript = function(pSName){
+    external_scripts.push(pSName);
   };
 
   function log(str){
@@ -182,22 +219,32 @@ WW.WorkerTask = function(){
   };  
 
   this.toBlob = function(){
-  	
+  	if(!len) throw new Error('No Listener found');
+
   	var t = Reply.toString()+';';
     t += log.toString()+";";
     t += defaultQuery.toString()+";";
     t += addNativeArray.toString()+";";
     t += "var supported ="+supported+";";
-    t += "var USE_TRANSFERABLE ="+USE_TRANSFERABLE+";";
     t += "var trans_data = [];";
-  	t += "queryableFunctions = {";
+    t += "var USE_TRANSFERABLE ="+USE_TRANSFERABLE+";";
+  	t += "queryable_functions = {";
 
     var i =0;
-  	for(var key in queryableFunctions){     
-  		t += key+" : "+queryableFunctions[key];
+  	for(var key in queryable_functions){     
+  		t += key+" : "+queryable_functions[key];
       t += (++i != len  ) ? ',' : "";
   	}
-  	
+
+    if(external_scripts.length){
+      t += "external_scripts = {";
+      var i =0;
+      for(var key in external_scripts){     
+        t += key+" : "+external_scripts[key];
+        t += (++i != len  ) ? ',' : "";
+      }
+  	}
+
   	t += "};";
   	t += "self.onmessage="+onmessage.toString()+';';
   	

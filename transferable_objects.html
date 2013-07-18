@@ -1,0 +1,92 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	
+	<div id="content"></div>
+
+	<button onclick="transferable();" >Prime Number Start/Stop</button>
+	Delay : <input id="delay" value="0" style="width:30px;" />
+	RTT Count : <text id="rtt_count" >0</text>
+	<div id="plane" style="color:0x000000; width:500px; height:500px;"></div>
+
+
+	<script type="text/javascript">
+		debug = window.location.search.indexOf('debug');
+		USE_TRANSFERABLE = true;
+	</script>
+	<script type="text/javascript" src="WW.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="ExampleTasks.js"></script>
+	
+
+	<script type="text/javascript">
+
+		content = document.getElementById("content");
+		
+		content.innerHTML = (debug > 0) ? "Are Transferables Supported ? : "+supported+
+			"<br/>Using Transferables : "+USE_TRANSFERABLE+"<br/>" : "";
+		
+		/* Worker Task */
+		var transferable_task = WW.TransferableObjectTask();
+		/* End Worker Task */
+
+		/* Worker */
+		var ww = new WW.Worker(transferable_task.toBlob());
+		
+		/* Worker Listener */
+		plane = document.getElementById("plane");
+		rtt_count_div = document.getElementById("rtt_count");
+
+		ww.addListener('print', function (pResult) {
+			var array_view = pResult[0];
+			
+			a = new Uint8Array(array_view);
+
+			var recv_time = Date.now();
+			var worker_recv_time = pResult[1];
+
+			content.innerHTML = "RTT : "+(Date.now() - sent_time)+"<br/>";
+			content.innerHTML += "Client ---- "+(worker_recv_time - sent_time)+' ------> Worker ------- '+(recv_time - worker_recv_time)+' -----> Client<br/>';
+			plane.style.backgroundColor = array_view[0];
+			content.innerHTML += "byteLength value : "+array_view+" = "+array_view.buffer.byteLength  / 1024 / 1024 +"MB<br/>";	
+
+			
+			rtt_count_div.innerHTML =  ++rtt_count;
+			setTimeout(launch_loop, delay);
+	    });
+
+
+		var a = initViewArray(1024*1024*32);
+		function launch_loop(){
+			
+
+			sent_time = Date.now();
+
+			ww.Query('transferable', a, sent_time);
+			
+		}
+
+	    /*End Worker Listener */
+	    var delay = 0; //delay in ms
+	    var sent_time;
+	    var rtt_count = document.getElementById("rtt_count").value || 0;
+	    var total_time = 0;
+	    var run = false;
+	    function transferable(){
+	    	if(!run){
+	    		delay = document.getElementById("delay").value || 0;
+	    		launch_loop(delay);
+	    		run = true;
+	    	} else if(run){
+	    		ww.terminate();
+	    		content.innerHTML += "Worker Terminated ! <br/>";
+	    		run = false;
+	    	}
+	    };
+
+
+	</script>
+</body>
+</html>

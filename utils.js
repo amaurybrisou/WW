@@ -10,3 +10,23 @@ function str2ab(str) {
   }
   return buf;
 }
+
+function initViewArray(size){
+	var ab = new ArrayBuffer(size);
+	var uInt8View = new Uint8Array(ab);
+	for(var i = 0; i < uInt8View.length; i++){
+		uInt8View[i] = i;
+	}
+	return uInt8View;
+}
+
+var scrollPage = (function(){
+  var last_min_y = 0,
+      last_max_y = 2;
+
+  return function(inc){
+    var inc = inc || 100;
+    window.scroll(last_min_y+=inc, last_max_y+=inc);
+  };
+
+}());
