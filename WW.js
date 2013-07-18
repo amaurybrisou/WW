@@ -5,7 +5,7 @@ window.supported = false;
 (function(){
   //Check Wether Transferable Objects are supported
   var worker = new Worker(window.URL.createObjectURL(
-    new Blob(["onmessage=function(e){ self.importScripts('add.js'); };"], { type : "text/javascript"})));
+    new Blob(["onmessage=function(e){};"], { type : "text/javascript"})));
   var ab = new ArrayBuffer(1);
   worker.postMessage(ab, [ab]);
   if (ab.byteLength) {
@@ -32,7 +32,7 @@ WW.Worker = function(pURL, pListener, pOnError ){
 
 			worker.listeners[pEvent.data.method].apply(
 				that,
-				[pEvent.data] );
+				pEvent.data );
 		} else {
 			worker.defaultListener.call(that, pEvent.data);
 		}
@@ -164,7 +164,6 @@ WW.WorkerTask = function(){
 
   onmessage = function(pEvent) {
 
-
     if (pEvent.data instanceof Object &&
      pEvent.data.hasOwnProperty("method")) {
 
@@ -174,7 +173,7 @@ WW.WorkerTask = function(){
 
       queryable_functions[pEvent.data.method].apply(
         self,
-        [data]);
+        data);
 
     } else {
       defaultQuery(pEvent.data);
@@ -238,16 +237,16 @@ WW.WorkerTask = function(){
     t += "};";
 
     if(external_scripts.length){
-      t += "var external_scripts = {";
-      var i =0;
-      for(var key in external_scripts){     
-        t += key+" : \""+external_scripts[key]+"\"";
-        t += (++i != len  ) ? ',' : "";
-      }
-      t += "};";
-      // for(var key in external_scripts){
-      //   t += "importScripts('"+external_scripts[key]+"');";
+      // t += "var external_scripts = {";
+      // var i =0;
+      // for(var key in external_scripts){     
+      //   t += key+" : \""+external_scripts[key]+"\"";
+      //   t += (++i != len  ) ? ',' : "";
       // }
+      // t += "};";
+      for(var key in external_scripts){
+        t += "importScripts('"+document.location.href.replace(/\/[^/]*$/,"/")+external_scripts[key]+"');";
+      }
   	} else {
        t += "var external_scripts = [];";
     }

@@ -68,10 +68,8 @@ WW.TransferableObjectTask.prototype = Object.call(WW.WorkerTask.prototype);
 WW.ImportScriptTask = function(){
 	WW.WorkerTask.call(this);
 
-	this.addListener('import_script', function(){
-		
-
-		var result = additionner(2 , 2);
+	this.addListener('import_script', function(a, b){
+		var result = additionner(a , b);
 
 		Reply('print', result);
 

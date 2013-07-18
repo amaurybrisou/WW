@@ -6,7 +6,7 @@
 	
 	<div id="content"></div>
 
-	<button onclick="import_script();" >Prime Number Start/Stop</button>
+	<button onclick="launch();" >Prime Number Start/Stop</button>
 	Delay : <input id="delay" value="0" style="width:30px;" />
 	RTT Count : <text id="rtt_count" >0</text>
 	<div id="plane" style="color:0x000000; width:500px; height:500px;"></div>
@@ -25,7 +25,7 @@
 	<script type="text/javascript">
 
 		content = document.getElementById("content");
-		
+
 		content.innerHTML = (debug > 0) ? "Are Transferables Supported ? : "+supported+
 			"<br/>Using Transferables : "+USE_TRANSFERABLE+"<br/>" : "";
 		
@@ -37,19 +37,28 @@
 
 		/* Worker */
 		var ww = new WW.Worker(import_script_task.toBlob());
-		console.log(import_script_task);
 		/* Worker Listener */
 		ww.addListener('print', function (pResult) {
-			console.log(pResult);
-			content.innerHTML += "Result :"+pResult;
+			content.innerHTML = "Result : "+pResult;
 	    });
 
+		var i =0;
 	    function import_script(){
-
-	    	ww.Query('import_script');
+	    	ww.Query('import_script', 5, ++i );
+	    	setTimeout(import_script, 100);
 		}
 
-		import_script();
+		var run = false;
+		function launch(){
+			if(!run){
+				import_script();
+				run = true;
+			} else if (run){
+				ww.terminate();
+
+			}
+		}
+
 
 	</script>
 </body>
