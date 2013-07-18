@@ -56,22 +56,11 @@ myWorker.Query("bonjour", "Friends");
 
 ##Advance Usage, Transferable Objects :
 
-In order to transfer your native arrays, simply call the function addNativeArray()
-on your WW.Worker() and also in your WorkerTask Listener ( you can add either ArrayBuffer
-or Whatever ArrayView)
-
-for example before Querying :
-
-```javascript
-myWorker.addNativeArray(a_native_array_view or a_native_buffer);
-```
-
-and in your WorkerTask Listener :
+In your WorkerTask Listener :
 
 ```javascript
 myTask.addListener('native_example', function(pArgs){
 								var ab = pArgs[0];
-								addNativeArray(ab);
 								Reply('print',  ab);
 							});
 ```
