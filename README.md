@@ -59,10 +59,11 @@ myWorker.Query("bonjour", "Friends");
 In your WorkerTask Listener :
 
 ```javascript
-myTask.addListener('native_example', function(pArgs){
-								var ab = pArgs[0];
-								Reply('print',  ab);
-							});
+myTask.addListener('native_example',
+	function(pArg){
+		var ab = pArg;
+		Reply('print',  ab);
+	});
 ```
 
 at Last you can Query your worker as usual like this :
