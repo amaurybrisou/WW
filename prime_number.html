@@ -6,9 +6,9 @@
 	<button onclick="prime();">Prime Number Start/Stop</button>
 	Delay : <input id="delay" value="0" />
 	<div id="content"></div>
-	<script type="text/javascript" src="WW.js"></script>
-	<script type="text/javascript" src="utils.js"></script>
-	<script type="text/javascript" src="ExampleTasks.js"></script>
+	<script type="text/javascript" src="src/WW.js"></script>
+	<script type="text/javascript" src="src/utils.js"></script>
+	<script type="text/javascript" src="example/prime_number.js"></script>
 	<script type="text/javascript">
 		var debug = window.location.search.indexOf('debug');
 		var USE_TRANSFERABLE = true;
@@ -33,9 +33,9 @@
 		var rows = 200, row_count = 0;
 		ww.addListener('print', function (pResult) {
 			nb_count++;
-			content.innerHTML += pResult[0]+" ";
+			content.innerHTML += pResult+" ";
 
-			if( (row_count+=(pResult[0].toString().length+1)) % rows === 0 || row_count > rows){
+			if( (row_count+=(pResult.toString().length+1)) % rows === 0 || row_count > rows){
 				content.innerHTML += "<br/>";
 				row_count = 0;	
 			} 

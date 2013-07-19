@@ -39,7 +39,6 @@ WW.Worker = function(pURL, pListener, pOnError ){
 	};
 
 	//Define onerror function
-	
 	worker.onerror = pOnError || 
     function(error){
       throw new Error(event.message + " (" + event.filename + ":" + event.lineno + ")");
@@ -237,13 +236,6 @@ WW.WorkerTask = function(){
     t += "};";
 
     if(external_scripts.length){
-      // t += "var external_scripts = {";
-      // var i =0;
-      // for(var key in external_scripts){     
-      //   t += key+" : \""+external_scripts[key]+"\"";
-      //   t += (++i != len  ) ? ',' : "";
-      // }
-      // t += "};";
       for(var key in external_scripts){
         t += "importScripts('"+document.location.href.replace(/\/[^/]*$/,"/")+external_scripts[key]+"');";
       }
