@@ -54,7 +54,7 @@ for exemple :
 myWorker.Query("bonjour", "Friends");
 ```
 
-##Advance Usage, Transferable Objects :
+###Transferable Objects :
 
 In your WorkerTask Listener :
 
