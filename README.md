@@ -103,8 +103,8 @@ in my WebGL video game. For some details, check the three examples in the bundle
 
 
 
-      ~~~
-  --- O ---
-	 _ _
-	(_|_)
-	]	[
+      ~~~    
+  --- O ---    
+	 _ _    
+	(_|_)     
+	]	[     
