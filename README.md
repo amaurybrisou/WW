@@ -95,8 +95,16 @@ at Last you can Query your worker as usual like this :
 myWorker.Query("native_example", my_native_array);
 ```
 
-########Note : that you receive results in the same order you sent them.
+######Note : that you receive results in the same order you sent them.
 
 Performance doesn't seems to be tremendously affected by my work since i use WW
 in my WebGL video game. For some details, check the three examples in the bundle.
-()
+
+
+
+
+      ~~~
+  --- O ---
+	 _ _
+	(_|_)
+	]	[
