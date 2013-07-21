@@ -31,7 +31,7 @@ myTask.addListener('worker_listener_name', function( /* eventually args */){
 })
 ```
 
-#####Exemple :
+######Exemple :
 
 ```javascript
 myTask.addListener('bonjour', function(o){
@@ -40,12 +40,10 @@ myTask.addListener('bonjour', function(o){
 ```
 
 
-If you need an external script in your worker context :
+######If you need an external script in your worker context :
 
 ```javascript
 myTask.addExternalScript("my_external_script.js");
-
-})
 ```
 
 
