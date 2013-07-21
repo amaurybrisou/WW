@@ -9,9 +9,10 @@ _manage your worker behaviour with Listeners (as many as you want).
 _think like you're only used to think !!    
 
 
-###Usage : 
+##Usage : 
 
-Create a WW.WorkerTask :
+
+###Create a WW.WorkerTask :
 	
 ```javascript
 var myTask = new WW.WorkerTask();
@@ -30,16 +31,6 @@ myTask.addListener('worker_listener_name', function( /* eventually args */){
 })
 ```
 
-If you need an external script in your worker context :
-
-
-```javascript
-myTask.addExternalScript("my_external_script.js");
-
-})
-```
-
-
 #####Exemple :
 
 ```javascript
@@ -48,7 +39,17 @@ myTask.addListener('bonjour', function(o){
 });
 ```
 
-Then create a WW.Worker :
+
+If you need an external script in your worker context :
+
+```javascript
+myTask.addExternalScript("my_external_script.js");
+
+})
+```
+
+
+###Then create a WW.Worker :
 
 ```javascript
 var myWorker = new WW.Worker(myTask.toBlob(), /*Default Listener : Optionnal ,  OnError Function : Optionnal*/);
