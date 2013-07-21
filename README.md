@@ -99,12 +99,3 @@ myWorker.Query("native_example", my_native_array);
 
 Performance doesn't seems to be tremendously affected by my work since i use WW
 in my WebGL video game. For some details, check the three examples in the bundle.
-
-
-
-
-      ~~~    
-  --- O ---    
-	 _ _    
-	(_|_)     
-	]	[     
