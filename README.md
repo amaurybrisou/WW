@@ -8,6 +8,9 @@ _reduce sources of errors.
 _manage your worker behaviour with Listeners (as many as you want).   
 _think like you're only used to think !!    
 
+##Demo :
+
+http://ww.puzzledge.eu/
 
 ##Usage : 
 
