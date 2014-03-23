@@ -1,4 +1,11 @@
-if(typeof WW == 'undefined') WW = {};
+/**
+ *
+ * This Library is under licence Beerware : http://fr.wikipedia.org/wiki/Beerware 
+ * Please let me know if you use it ;)
+ * 
+ **/
+ 
+ if(typeof WW == 'undefined') WW = {};
 
 window.supported = false;
 
