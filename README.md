@@ -2,11 +2,11 @@
 
 Extention of Web Worker. It enables you :     
 
-_to write your web worker code wherever you want ! ( just a TaskWorker Object able to convert itself to Blob Url);    
-_avoid managing with odd Web Worker syntax. (arguments are sent and received in the same order)    
-_reduce sources of errors.    
-_manage your worker behaviour with Listeners (as many as you want).   
-_think like you're only used to think !!    
+_ to write your web worker code wherever you want ! ( just a TaskWorker Object able to convert itself to Blob Url);    
+_ avoid managing with odd Web Worker syntax. (arguments are sent and received in the same order)    
+_ reduce sources of errors.    
+_ manage your worker behaviour with Listeners (as many as you want).   
+_ think like you're only used to think !!    
 
 ##Demo :
 
